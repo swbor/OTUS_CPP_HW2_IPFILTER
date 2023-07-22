@@ -40,7 +40,7 @@ if(WITH_BOOST_TEST)
 
     target_link_libraries(test_version
         ${Boost_LIBRARIES}
-        helloworld
+        ip_filter
     )
 endif()
 
