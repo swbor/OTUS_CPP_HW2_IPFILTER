@@ -1,8 +1,11 @@
 #include <cassert>
+#include <cstddef>
 #include <cstdlib>
 #include <iostream>
+#include <ostream>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 // ("",  '.') -> [""]
 // ("11", '.') -> ["11"]
@@ -12,7 +15,7 @@
 // ("11.22", '.') -> ["11", "22"]
 std::vector<unsigned char> split(const std::string &str, char d)
 {
-    std::vector<std::string> r;
+    std::vector<unsigned char> r;
 
     std::string::size_type start = 0;
     std::string::size_type stop = str.find_first_of(d);
@@ -24,7 +27,7 @@ std::vector<unsigned char> split(const std::string &str, char d)
         stop = str.find_first_of(d, start);
     }
 
-    r.push_back(str.substr(start));
+    r.push_back(std::stoi(str.substr(start)));
 
     return r;
 }
@@ -43,20 +46,21 @@ void print_ip_pool(std::vector<std::vector<unsigned char>>& ip_pool)
             }
             else
             {
-                cout << ".";
+                std::cout << ".";
             }
-            cout << byte;
+            std::cout << std::to_string(byte);
         }
+        std::cout<<std::endl;
     }
 }
 
 
 auto filter(std::vector<std::vector<unsigned char>>& ip_pool, int param0, int param1 = -1, int param2 = -1, int param3 = -1)
 {
-    std::remove_reference<decltype(ip_pool)> result;
+    std::remove_reference<decltype(ip_pool)>::type result;
     for (const auto& ip : ip_pool)
     {
-        if (ip[0]==param0&&(param1==-1||ip[1]==param1) && (param2 == -1 || ip[2] == param2) && (param3 == -1 || ip[3] == param3)
+        if (ip[0]==param0&&(param1==-1||ip[1]==param1) && (param2 == -1 || ip[2] == param2) && (param3 == -1 || ip[3] == param3))
             result.push_back(ip);
     }
     return result;
@@ -64,7 +68,7 @@ auto filter(std::vector<std::vector<unsigned char>>& ip_pool, int param0, int pa
 
 auto filter_any(std::vector<std::vector<unsigned char>>& ip_pool, int param)
 {
-    std::remove_reference<decltype(ip_pool)> result;
+    std::remove_reference<decltype(ip_pool)>::type result;
         for (const auto& ip : ip_pool)
         {
             if (ip[0] == param || ip[1] == param|| ip[2] == param || ip[3] == param)
@@ -73,7 +77,7 @@ auto filter_any(std::vector<std::vector<unsigned char>>& ip_pool, int param)
     return result;
 }
 
-int main(int argc, char const *argv[])
+int main(/*int argc, char const *argv[]*/)
 {
     try
     {
@@ -81,15 +85,16 @@ int main(int argc, char const *argv[])
 
         for(std::string line; std::getline(std::cin, line);)
         {
-            auto v = split(line, '\t');
-            ip_pool.push_back(split(v.at(0), '.'));
+            auto v = split(line, '.');
+            ip_pool.push_back(v); 
         }
 
+        print_ip_pool(ip_pool);
         // TODO reverse lexicographically sort
 
         std::sort(ip_pool.begin(), ip_pool.end(), [](std::vector<unsigned char> a, std::vector<unsigned char> b)
             {
-                for (int i = 0; i < a.size; i++)
+                for (std::size_t i = 0; i < a.size(); i++)
                 {
                     if (a[i] > b[i])
                         return true;
@@ -98,20 +103,6 @@ int main(int argc, char const *argv[])
                 }
                 return false;
             });
-        /*
-        for(const auto ip = ip_pool.cbegin(); ip != ip_pool.cend(); ++ip)
-        {
-            for(const auto ip_part = ip->cbegin(); ip_part != ip->cend(); ++ip_part)
-            {
-                if (ip_part != ip->cbegin())
-                {
-                    std::cout << ".";
-
-                }
-                std::cout << *ip_part;
-            }
-            std::cout << std::endl;
-        }*/
         print_ip_pool(ip_pool);
         auto res1 = filter(ip_pool, 1);
         print_ip_pool(res1);
@@ -119,7 +110,7 @@ int main(int argc, char const *argv[])
         res1 = filter(ip_pool, 46, 70);
         print_ip_pool(res1);
         res1.clear();
-        auto res1 = filter_any(ip_pool, 46);
+        res1 = filter_any(ip_pool, 46);
         print_ip_pool(res1);
 
         // 222.173.235.246
