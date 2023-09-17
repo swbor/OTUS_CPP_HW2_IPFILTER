@@ -69,7 +69,7 @@ auto filter(VecOfVecOfUchar& ip_pool, int param0, int param1 = -1, int param2 = 
         }
         catch(int code)
         {
-            printf("filtration Error code:%i\n. For ip:%i.%i.%i.%i\n",code,ip[0],ip[1],ip[2],ip[3] );
+            printf("filtration. Error code:%i\n. For ip:%i.%i.%i.%i\n",code,ip[0],ip[1],ip[2],ip[3] );
         }
     }
     return result;
@@ -80,8 +80,15 @@ auto filter_any(VecOfVecOfUchar& ip_pool, int param)
     std::remove_reference<decltype(ip_pool)>::type result;
         for (const auto& ip : ip_pool)
         {
-            if (ip[0] == param || ip[1] == param|| ip[2] == param || ip[3] == param)
-                result.push_back(ip);
+            try
+            {
+                if (ip[0] == param || ip[1] == param|| ip[2] == param || ip[3] == param)
+                    result.push_back(ip);
+            }
+            catch(int code)
+            {
+                printf("filtration any. Error code:%i\n. For ip:%i.%i.%i.%i\n",code,ip[0],ip[1],ip[2],ip[3] );
+            }
         }
     return result;
 }
