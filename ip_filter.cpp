@@ -4,6 +4,7 @@
 #include <iostream>
 #include <ostream>
 #include <string>
+#include <system_error>
 #include <vector>
 #include <algorithm>
 
@@ -62,8 +63,14 @@ auto filter(VecOfVecOfUchar& ip_pool, int param0, int param1 = -1, int param2 = 
     std::remove_reference<decltype(ip_pool)>::type result;
     for (const auto& ip : ip_pool)
     {
-        if (ip[0]==param0&&(param1==-1||ip[1]==param1) && (param2 == -1 || ip[2] == param2) && (param3 == -1 || ip[3] == param3))
-            result.push_back(ip);
+        try{
+            if (ip[0]==param0&&(param1==-1||ip[1]==param1) && (param2 == -1 || ip[2] == param2) && (param3 == -1 || ip[3] == param3))
+                result.push_back(ip);
+        }
+        catch(int code)
+        {
+            printf("filtration Error code:%i\n. For ip:%i.%i.%i.%i\n",code,ip[0],ip[1],ip[2],ip[3] );
+        }
     }
     return result;
 }
