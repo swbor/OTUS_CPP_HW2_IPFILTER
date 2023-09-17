@@ -7,6 +7,8 @@
 #include <vector>
 #include <algorithm>
 
+using VecOfVecOfUchar = std::vector<std::vector<unsigned char>>;
+
 // ("",  '.') -> [""]
 // ("11", '.') -> ["11"]
 // ("..", '.') -> ["", "", ""]
@@ -32,7 +34,7 @@ std::vector<unsigned char> split(const std::string &str, char d)
     return r;
 }
 
-void print_ip_pool(std::vector<std::vector<unsigned char>>& ip_pool)
+void print_ip_pool(VecOfVecOfUchar& ip_pool)
 {
     bool first;
     for (const auto& ip : ip_pool)
@@ -55,7 +57,7 @@ void print_ip_pool(std::vector<std::vector<unsigned char>>& ip_pool)
 }
 
 
-auto filter(std::vector<std::vector<unsigned char>>& ip_pool, int param0, int param1 = -1, int param2 = -1, int param3 = -1)
+auto filter(VecOfVecOfUchar& ip_pool, int param0, int param1 = -1, int param2 = -1, int param3 = -1)
 {
     std::remove_reference<decltype(ip_pool)>::type result;
     for (const auto& ip : ip_pool)
@@ -66,7 +68,7 @@ auto filter(std::vector<std::vector<unsigned char>>& ip_pool, int param0, int pa
     return result;
 }
 
-auto filter_any(std::vector<std::vector<unsigned char>>& ip_pool, int param)
+auto filter_any(VecOfVecOfUchar& ip_pool, int param)
 {
     std::remove_reference<decltype(ip_pool)>::type result;
         for (const auto& ip : ip_pool)
@@ -89,26 +91,19 @@ int main(/*int argc, char const *argv[]*/)
             ip_pool.push_back(v); 
         }
 
-        print_ip_pool(ip_pool);
+        //print_ip_pool(ip_pool);
         // TODO reverse lexicographically sort
 
-        std::sort(ip_pool.begin(), ip_pool.end(), [](std::vector<unsigned char> a, std::vector<unsigned char> b)
-            {
-                for (std::size_t i = 0; i < a.size(); i++)
-                {
-                    if (a[i] > b[i])
-                        return true;
-                    else if (a[i] < b[i])
-                        return false;
-                }
-                return false;
-            });
+        std::sort(ip_pool.begin(), ip_pool.end(), std::greater<std::vector<unsigned char>>());
         print_ip_pool(ip_pool);
+
         auto res1 = filter(ip_pool, 1);
         print_ip_pool(res1);
+
         res1.clear();
         res1 = filter(ip_pool, 46, 70);
         print_ip_pool(res1);
+
         res1.clear();
         res1 = filter_any(ip_pool, 46);
         print_ip_pool(res1);
